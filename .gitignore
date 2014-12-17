@@ -1,0 +1,7 @@
+#IDE and build files
+.idea
+target
+project
+
+#OSX specific
+.DS_Store
