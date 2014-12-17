@@ -64,11 +64,17 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
     new Thread("SQS Receiver") {
       override def run() {
         try {
-          implicit val sqs = SQS.apply(Credentials(credentials.key, credentials.secret)).at(Region.apply(region))
+
+          implicit val sqs = (if (credentials.notValid)
+            SQS.apply(Credentials(credentials.key, credentials.secret))
+          else SQS.apply())
+            .at(Region.apply(region))
+
           val queue: Queue = sqs.queue(name) match {
             case Some(q) => q
             case None => throw new IllegalArgumentException(s"No queue with the name $name found")
           }
+
           @tailrec
           def poll(): Unit = {
             if (!isStopped()) {
@@ -81,6 +87,7 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
             }
           }
           poll()
+
         } catch {
           case e: IllegalArgumentException => restart(e.getMessage, e, 5000)
           case t: Throwable => restart("Connection error", t)
@@ -99,20 +106,17 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
   private class SQSCredentials extends Serializable {
     private var _key = ""
     private var _secret = ""
-
     def key = _key
-
     def secret = _secret
-
     def key(v: String) = {
       _key = v
       this
     }
-
     def secret(v: String) = {
       _secret = v
       this
     }
+    def notValid = _key.isEmpty || _secret.isEmpty
   }
 
 }
