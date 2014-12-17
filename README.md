@@ -1,6 +1,6 @@
 Spark SQS Receiver
 ==================
- SQS Amazon queue receiver for the Spark, example usage:
+SQS Amazon queue receiver for the Spark, example usage:
 
 ```scala
     ssc.receiverStream(new SQSReceiver("sample")
