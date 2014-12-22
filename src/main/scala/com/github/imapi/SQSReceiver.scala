@@ -1,3 +1,5 @@
+package com.github.imapi
+
 import awscala._
 import awscala.sqs.{Queue, SQS}
 import com.amazonaws.auth.PropertiesCredentials
