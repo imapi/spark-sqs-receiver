@@ -8,13 +8,13 @@ organization := "com.github.imapi"
 
 profileName := "com.github.imapi"
 
-version := "1.0.1"
+version := "1.0.2"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.5"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "1.1.1"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "1.2.0"
 
-libraryDependencies += "org.apache.spark" % "spark-streaming" % "1.1.1"
+libraryDependencies += "org.apache.spark" %% "spark-streaming" % "1.2.0"
 
 libraryDependencies += "com.github.seratch" %% "awscala" % "0.4.+"
 
