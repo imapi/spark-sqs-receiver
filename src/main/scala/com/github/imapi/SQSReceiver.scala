@@ -4,7 +4,6 @@ import awscala._
 import awscala.sqs.{Queue, SQS}
 import com.amazonaws.auth.PropertiesCredentials
 import com.amazonaws.regions.Regions
-import org.apache.spark.Logging
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
 
@@ -35,7 +34,7 @@ import scala.annotation.tailrec
   *
   * By default credentials are empty, regions is Regions.DEFAULT_REGION and timeout is 1 second
   */
-class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND_DISK_2) with Logging {
+class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND_DISK_2) {
 
   private val credentials: SQSCredentials = new SQSCredentials
   private var region: Regions = Regions.DEFAULT_REGION
