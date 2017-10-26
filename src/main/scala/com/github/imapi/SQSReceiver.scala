@@ -1,11 +1,17 @@
 package com.github.imapi
 
-import awscala._
-import awscala.sqs.{Queue, SQS}
+import com.amazonaws.auth.AWSCredentials
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.sqs.AmazonSQS
+import com.amazonaws.services.sqs.AmazonSQSClient
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
+import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.auth.PropertiesCredentials
 import com.amazonaws.regions.Regions
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
+
+import scala.collection.JavaConversions._
 
 import scala.annotation.tailrec
 
@@ -35,19 +41,14 @@ import scala.annotation.tailrec
   * By default credentials are empty, regions is Regions.DEFAULT_REGION and timeout is 1 second
   */
 class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND_DISK_2) {
-
-  private val credentials: SQSCredentials = new SQSCredentials
+  private var awsKey: String = ""
+  private var awsSecret: String = ""
   private var region: Regions = Regions.DEFAULT_REGION
   private var timeout: Int = 1000
 
   def credentials(accessKeyId: String, secretAccessKey: String): SQSReceiver = {
-    credentials.key(accessKeyId).secret(secretAccessKey)
-    this
-  }
-
-  def credentials(filename: String): SQSReceiver = {
-    val p = new PropertiesCredentials(new File(filename))
-    credentials.key(p.getAWSAccessKeyId).secret(p.getAWSSecretKey)
+    awsKey = accessKeyId
+    awsSecret = secretAccessKey
     this
   }
 
@@ -65,23 +66,17 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
     new Thread("SQS Receiver") {
       override def run() {
         try {
+          val credentials = new BasicAWSCredentials(awsKey, awsSecret)
+          val sqs = new AmazonSQSClient(credentials)
 
-          implicit val sqs = (if (credentials.notValid)
-            SQS.apply(Credentials(credentials.key, credentials.secret))
-          else SQS.apply())
-            .at(Region.apply(region))
-
-          val queue: Queue = sqs.queue(name) match {
-            case Some(q) => q
-            case None => throw new IllegalArgumentException(s"No queue with the name $name found")
-          }
-
+          val receiveMessageRequest = new ReceiveMessageRequest(name);
+          
           @tailrec
           def poll(): Unit = {
             if (!isStopped()) {
-              queue.messages.foreach(msg => {
-                store(msg.body)
-                queue.remove(msg)
+              sqs.receiveMessage(receiveMessageRequest).getMessages().foreach(msg => {
+                store(msg.getBody)
+                sqs.deleteMessage(new DeleteMessageRequest(name, msg.getReceiptHandle()))
               })
               Thread.sleep(timeout)
               poll()

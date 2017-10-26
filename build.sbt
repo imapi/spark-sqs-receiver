@@ -11,7 +11,7 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % "2.1.1"
 
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.1.1"
 
-libraryDependencies += "com.github.seratch" %% "awscala" % "0.4.+"
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-sqs" % "1.11.220"
 
 pomExtra := {
   <url>https://github.com/imapi/spark-sqs-receiver</url>
