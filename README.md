@@ -1,5 +1,18 @@
 Spark SQS Receiver
 ==================
+
+
+## Build and Deploy
+
+`sbt package; sbt make-pom`
+
+Deployment is currently manual.  Make sure that you have a user for myget with permissions to upload to the transformer-dependencies-lingk feed (https://www.myget.org/feed/Packages/transformer-dependencies-lingk).
+
+From the "Packages" page of the feed:
+  * Add Package -> Maven Package
+  * choose $SQS_RECEIVER_HOME/target/scala-2.1.1/spark-sqs-receiver_2.11-1.0.4-$VERSION.jar for the jar
+  * choose $SQS_RECEIVER_HOME/target/scala-2.1.1/spark-sqs-receiver_2.11-1.0.4-$VERSION.pom for the pom
+
 SQS Amazon queue receiver for the Spark, example usage:
 
 ```scala

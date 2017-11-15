@@ -1,9 +1,9 @@
 
 name := "spark-sqs-receiver"
 
-organization := "com.github.imapi"
+organization := "io.lingk"
 
-version := "1.0.3"
+version := "1.0.4"
 
 scalaVersion := "2.11.7"
 
