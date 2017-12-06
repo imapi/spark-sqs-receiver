@@ -3,11 +3,11 @@ name := "spark-sqs-receiver"
 
 organization := "io.lingk"
 
-version := "1.0.4"
+version := "1.0.5"
 
 scalaVersion := "2.11.7"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "2.1.1"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.2.0"
 
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.1.1"
 
