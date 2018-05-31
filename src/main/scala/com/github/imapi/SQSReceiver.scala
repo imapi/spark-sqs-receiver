@@ -38,13 +38,14 @@ import scala.annotation.tailrec
   *   <li>timeout - poll timeout for the queue</li>
   * </ul>
   *
-  * By default credentials are empty, regions is Regions.DEFAULT_REGION and timeout is 1 second
+  * By default credentials are empty, regions is Regions.DEFAULT_REGION, timeout is 20 seconds and maxMessages is 10
   */
 class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND_DISK_2) {
   private var awsKey: String = ""
   private var awsSecret: String = ""
   private var region: Regions = Regions.DEFAULT_REGION
-  private var timeout: Int = 1000
+  private var timeout: Int = 20
+  private var maxMessages: Int = 10
 
   def credentials(accessKeyId: String, secretAccessKey: String): SQSReceiver = {
     awsKey = accessKeyId
@@ -58,7 +59,12 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
   }
 
   def withTimeout(secs: Int) = {
-    this.timeout = secs * 1000
+    this.timeout = secs
+    this
+  }
+  
+  def withMaxMessages(m: Int) = {
+    this.maxMessages = m
     this
   }
 
@@ -69,7 +75,7 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
           val credentials = new BasicAWSCredentials(awsKey, awsSecret)
           val sqs = new AmazonSQSClient(credentials)
 
-          val receiveMessageRequest = new ReceiveMessageRequest(name);
+          val receiveMessageRequest = new ReceiveMessageRequest(name).withMaxNumberOfMessages(maxMessages).withWaitTimeSeconds(timeout);
           
           @tailrec
           def poll(): Unit = {
@@ -78,7 +84,6 @@ class SQSReceiver(name: String) extends Receiver[String](StorageLevel.MEMORY_AND
                 store(msg.getBody)
                 sqs.deleteMessage(new DeleteMessageRequest(name, msg.getReceiptHandle()))
               })
-              Thread.sleep(timeout)
               poll()
             }
           }
