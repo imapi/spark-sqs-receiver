@@ -4,7 +4,7 @@ Spark SQS Receiver
 
 ## Build and Deploy
 
-`sbt '+package; +makePom`
+`sbt '+package; +makePom'`
 
 Deployment is currently manual.  Make sure that you have a user for myget with permissions to upload to the transformer-dependencies-lingk feed (https://www.myget.org/feed/Packages/transformer-dependencies-lingk).
 
