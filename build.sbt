@@ -3,15 +3,17 @@ name := "spark-sqs-receiver"
 
 organization := "io.lingk"
 
-version := "1.0.7"
+version := "1.1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.13"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "2.2.0"
+crossScalaVersions := Seq("2.11.12", "2.12.13")
 
-libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.2.0"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.7" % Provided
 
-libraryDependencies += "com.amazonaws" % "aws-java-sdk-sqs" % "1.11.220"
+libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.7" % Provided
+
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-sqs" % "1.11.937"
 
 pomExtra := {
   <url>https://github.com/imapi/spark-sqs-receiver</url>
