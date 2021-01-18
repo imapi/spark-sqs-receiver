@@ -1,8 +1,8 @@
 #IDE and build files
 .idea
 target
-project
 .project
+.bsp
 
 #OSX specific
 .DS_Store
